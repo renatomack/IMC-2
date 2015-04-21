@@ -29,14 +29,12 @@ public class Ex2 extends JFrame {
     //declaração das variáveis
     //Vetor de caracteres (String) de 2 colunas
 
-    private final String sexo[] = {"Mulher", "Homem"};
-    //inteiros (int)
-    int tipo, foto;
-    //numeros de pontos flutuantes (double)
-    double altura, peso, massa;
     //criando um array já com os valores configurados do tipo double
-    double imc_homens[] = {20.7, 26.4};
-    double imc_mulheres[] = {19.1, 25.8};
+    private int tipo;
+    private double altura;
+    private double peso;
+    private double massa;
+    private double[] imc = {20.7, 26.4};
     private String string = "";
 
     //criação do FlowLayout que alinha componentes da esquerda para a direita.
@@ -51,7 +49,6 @@ public class Ex2 extends JFrame {
     private final JButton butao = new JButton("Calcular");
     private final JButton butao2 = new JButton("Limpar Dados");
     //criação das label's
-    private final JLabel Lsexo = new JLabel("Escolha o sexo:");
     private final JLabel Laltura = new JLabel("Altura em cm:");
     private final JLabel Lpeso = new JLabel("Peso em Kg:");
     private final JLabel Lresultado = new JLabel("");
@@ -60,20 +57,15 @@ public class Ex2 extends JFrame {
     private final JTextField Faltura = new JTextField("", 5);
     private final JTextField Fpeso = new JTextField("", 5);
 
-    //criação de uma caixa de seleção
-    private JComboBox escolha = new JComboBox(sexo);
-
+//    //criação de uma caixa de seleção
+//    private JComboBox escolha = new JComboBox(getSexo());
     //anexando a imagem um icone de nome limpar
     private final Icon limpar = new ImageIcon(getClass().getResource("blank.gif"));
-  //criando um vetor com as demais imagens
-    private final Icon imagemM[] = {new ImageIcon(getClass().getResource("esqueleto.gif")), new ImageIcon(getClass()
-        .getResource("normalM.jpg")), new ImageIcon(getClass().getResource("obesa.jpg"))};
-    private final Icon imagemH[] = {new ImageIcon(getClass().getResource("esqueleto.gif")), new ImageIcon(getClass().getResource("normalH.jpg")), new ImageIcon(getClass().getResource("obeso.jpg"))};
 
     //construtor de Ex2 sem argumentos
     public Ex2() {
         //título  da janela
-        super("Calculo do IMC(índice de massa corporal)");
+        super("Calculo do IMC(Índice de massa corporal)");
         //alinhamento do frame com o uso do objeto flowLayout
         super.setLayout(flowLayout);
         //tamanho da janela
@@ -82,12 +74,11 @@ public class Ex2 extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //exibe 2 linhas da caixa de seleção ao clicá-la
-        escolha.setMaximumRowCount(2);
+//        escolha.setMaximumRowCount(2);
         //alinha o painel com o objeto gridLayout
         gridJPanel.setLayout(gridLayout);
         //adiciona os componentes
-        gridJPanel.add(Lsexo);
-        gridJPanel.add(escolha);
+//        gridJPanel.add(escolha);
         gridJPanel.add(Laltura);
         gridJPanel.add(Faltura);
         gridJPanel.add(Lpeso);
@@ -97,26 +88,11 @@ public class Ex2 extends JFrame {
 
         //adiciona a janela principal
         super.add(gridJPanel);
-        super.add(Lfoto);
         super.add(Lresultado);
 
         //criação de uma classe interna anônima para butao
         butao.addActionListener((ActionEvent event) -> {
-            switch (escolha.getSelectedIndex()) {
-                /*caso seja a primeira opção que foi selecionada na caixa de seleção
-                configure tipo=0 e vá para o método Calculos*/
-                case 0: {
-                    tipo = 0; //mulher
-                    Calculos();
-                    break;
-                }
-                //caso seja a segunda opção, configura tipo como 1 e vá para o método Calculos.
-                case 1: {
-                    tipo = 1; //homem
-                    Calculos();
-                    break;
-                }
-            }
+            Calculos();
         } //Fim da classe interna anônima
         );//fim da chamada para addActionListerner
 
@@ -133,60 +109,38 @@ public class Ex2 extends JFrame {
         try //tratador de erros com try e catch
         {
             //pega e converte os caracteres em ponto flutuante do campo Faltura para a variavel altura
-            altura = Double.parseDouble(Faltura.getText());
-            //converte para metros
-            altura /= 100;
+            setAltura(Double.parseDouble(Faltura.getText()));
             //da mesma forma com Fpeso para a variável peso
-            peso = Double.parseDouble(Fpeso.getText());
+            setPeso(Double.parseDouble(Fpeso.getText()));
             //realiza calculos
-            massa = peso / (altura * altura);
+            setMassa(getPeso() / (getAltura() * getAltura()));
+
             /*Se a massa corporal for menor do que o estabelecido pelo vetor configure a variável
              string com essa frase*/
-            if (tipo == 0) {
-                if (imc_mulheres[0] > massa) {
-                    string = String.format("CUIDADO!!!Voce estar abaixo do peso! IMC %.2f", massa);
-                    foto = 0;
-                } else if ((imc_mulheres[0] < massa) && (massa <= imc_mulheres[1])) {
-                    string = String.format("PARABENS!!Voce estar com o peso ideal! IMC %.2f", massa);
-                    foto = 1;
-                } else {
-                    string = String.format("CUIDADO!!Voce estar obesa! IMC %.2f", massa);
-                    foto = 2;
-                }
-                //configure a foto conforme a posição da variável foto
-                Lfoto.setIcon(imagemM[foto]);
-            } else if (tipo == 1) {
-                if (imc_homens[0] > massa) {
-                    string = String.format("CUIDADO!!!Voce estar abaixo do peso! IMC %.2f", massa);
-                    //configura a posição que será exibido a imagem
-                    foto = 0;
-                } else if ((imc_homens[0] < massa) && (massa < imc_homens[1])) {
-                    string = String.format("PARABENS!!Voce estar com o peso ideal! IMC %.2f", massa);
-                    foto = 1;
-                } else {
-                    string = String.format("CUIDADO!!Voce estar obeso! IMC %.2f", massa);
-                    foto = 2;
-                }
-                //configure a foto conforme a posição da variável foto
-                Lfoto.setIcon(imagemH[foto]);
+            if (getImc()[0] > getMassa()) {
+                string = String.format("CUIDADO!!!Você está abaixo do peso! IMC %.2f", getMassa());
+            } else if ((getImc()[0] < getMassa()) && (getMassa() <= getImc()[1])) {
+                string = String.format("PARABÉNS!!Você está com o peso ideal! IMC %.2f", getMassa());
+            } else {
+                string = String.format("CUIDADO!!Você está obeso(a)! IMC %.2f", getMassa());
             }
+
             //reconfigure o tamanho da tela
-            setSize(370, 500);
+            setSize(370, 180);
             //configure a label Lresultado com a variável string
             Lresultado.setText(string);
         } //caso ocorra uma excessão(erro) exiba uma mensagem nua caixa de mensagem
         catch (NumberFormatException exception) {
-            JOptionPane.showMessageDialog(this, "No número inválido!\nEx: Use '.' ao invés de ',' para separar as casas decimais.", "ERROR FATAL!!!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Número inválido!\nEx: Use '.' ao invés de ',' para separar as casas decimais.");
             //limpe s campos e variáveis
             Fpeso.setText("");
             Faltura.setText("");
-            peso = 0;
-            altura = 0;
+            setPeso(0);
+            setAltura(0);
         }
     }
 
     //método para limpar os dados da tela e retornar a tela ao seu tamanho original
-
     private void limpar() {
         Fpeso.setText("");
         Faltura.setText("");
@@ -195,4 +149,75 @@ public class Ex2 extends JFrame {
         Lfoto.setIcon(limpar);
         setSize(300, 160);
     }
+
+    /**
+     * @return the tipo
+     */
+    public int getTipo() {
+        return tipo;
+    }
+
+    /**
+     * @return the altura
+     */
+    public double getAltura() {
+        return altura;
+    }
+
+    /**
+     * @return the peso
+     */
+    public double getPeso() {
+        return peso;
+    }
+
+    /**
+     * @return the massa
+     */
+    public double getMassa() {
+        return massa;
+    }
+
+    /**
+     * @param tipo the tipo to set
+     */
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
+
+    /**
+     * @param altura the altura to set
+     */
+    public void setAltura(double altura) {
+        this.altura = altura;
+    }
+
+    /**
+     * @param peso the peso to set
+     */
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    /**
+     * @param massa the massa to set
+     */
+    public void setMassa(double massa) {
+        this.massa = massa;
+    }
+
+    /**
+     * @return the imc
+     */
+    public double[] getImc() {
+        return imc;
+    }
+
+    /**
+     * @param imc the imc to set
+     */
+    public void setImc(double[] imc) {
+        this.imc = imc;
+    }
+
 }//Fim da classe Ex2
